@@ -1,0 +1,16 @@
+# Valid test cases
+add_integer(3, 5) => 8
+add_integer(100) => 198
+add_integer(-2, 10) => 8
+add_integer(0, 0) => 0
+add_integer(5.5, 2.3) => 7
+add_integer(10.9, 2) => 12
+add_integer(3.1) => 101
+
+# Invalid test cases (should raise TypeError)
+add_integer("hello", 5) => TypeError: a must be an integer
+add_integer(5, "world") => TypeError: b must be an integer
+add_integer(None, 5) => TypeError: a must be an integer
+add_integer(5, None) => TypeError: b must be an integer
+add_integer([1, 2], 5) => TypeError: a must be an integer
+add_integer(5, {1: 2}) => TypeError: b must be an integer
