@@ -45,4 +45,4 @@ def fetch_and_save_posts():
             for row in rows:
                 writer.writerow(row)
     else:
-        raise Exception(f'Failed to fetch posts: {response.status_code}')
+        print(f'Failed to fetch posts: {response.status_code}')
