@@ -1,50 +1,47 @@
+# task_04_flask.py
+
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# In-memory storage for users
-db_users = {}
+# In-memory store of users; keys are usernames
+users = {}
 
 @app.route('/')
 def home():
-    """Root endpoint returning a welcome message."""
-    return "Welcome to the Flask API!"
+    return 'Welcome to the Flask API!'
 
-@app.route('/data')
-def list_usernames():
-    """Returns a JSON list of all usernames."""
-    return jsonify(list(db_users.keys()))
+@app.route('/data', methods=['GET'])
+def get_usernames():
+    """
+    Return a JSON list of all usernames currently in `users`.
+    E.g. [] or ["jane", "john"]
+    """
+    # list(users.keys()) will be [] until you add users via /add_user
+    return jsonify(list(users.keys())), 200
 
-@app.route('/status')
-def status():
-    """Returns plain text OK to indicate service health."""
-    return "OK"
-
-@app.route('/users/<username>')
-def get_user(username):
-    """Returns the user object for the given username or 404 if not found."""
-    user = db_users.get(username)
-    if user:
-        return jsonify(user)
-    return jsonify({"error": "User not found"}), 404
-
+# Example of add_user so you can actually populate users:
 @app.route('/add_user', methods=['POST'])
 def add_user():
-    """Adds a new user to the in-memory store."""
-    payload = request.get_json()
-    # Check for JSON and required field
-    if not payload or 'username' not in payload:
-        return jsonify({"error": "Username is required"}), 400
-    username = payload['username']
-    # Build user object
-    user = {
-        "username": username,
-        "name": payload.get('name'),
-        "age": payload.get('age'),
-        "city": payload.get('city')
+    data = request.get_json() or {}
+    username = data.get('username')
+    if not username:
+        return jsonify({'error': 'Username is required'}), 400
+
+    # Prevent overwriting
+    if username in users:
+        return jsonify({'error': 'User already exists'}), 400
+
+    users[username] = {
+        'username': username,
+        'name': data.get('name'),
+        'age': data.get('age'),
+        'city': data.get('city')
     }
-    db_users[username] = user
-    return jsonify({"message": "User added", "user": user}), 201
+    return jsonify({
+        'message': 'User added',
+        'user': users[username]
+    }), 201
 
 if __name__ == '__main__':
     app.run()
