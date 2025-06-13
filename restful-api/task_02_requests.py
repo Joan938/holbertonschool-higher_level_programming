@@ -9,12 +9,14 @@ def fetch_and_print_posts():
     """
     response = requests.get('https://jsonplaceholder.typicode.com/posts')
     print(f'Status Code: {response.status_code}')
-    if response.ok:
+    if response.status_code == 200:
         posts = response.json()
         for post in posts:
             title = post.get('title')
             if title:
                 print(title)
+    else:
+        print(f'Failed to fetch posts: {response.status_code}')
 
 
 def fetch_and_save_posts():
@@ -23,7 +25,8 @@ def fetch_and_save_posts():
     with columns: id, title, body.
     """
     response = requests.get('https://jsonplaceholder.typicode.com/posts')
-    if response.ok:
+    print(f'Status Code: {response.status_code}')
+    if response.status_code == 200:
         posts = response.json()
         # Structure data as list of dicts
         rows = [
@@ -41,3 +44,5 @@ def fetch_and_save_posts():
             writer.writeheader()
             for row in rows:
                 writer.writerow(row)
+    else:
+        raise Exception(f'Failed to fetch posts: {response.status_code}')
