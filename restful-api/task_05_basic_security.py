@@ -1,4 +1,4 @@
-# task_05_security.py
+# task_05_basic_security.py
 
 from flask import Flask, jsonify, request
 from flask_httpauth import HTTPBasicAuth
