@@ -1,5 +1,5 @@
 #!/usr/bin/node
 
 // Create a constant variable with the required message
-enable myVar = "JavaScript is amazing" // semistandard compatible
+const myVar = 'JavaScript is amazing';
 console.log(myVar);
