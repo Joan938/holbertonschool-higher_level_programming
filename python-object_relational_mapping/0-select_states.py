@@ -1,51 +1,30 @@
 #!/usr/bin/python3
-"""list states in database"""
+"""List all states in a MySQL database."""
 import MySQLdb
 import sys
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String
-
-Base = declarative_base()
-
-
-class State(Base):
-    """base of the sql"""
-    __tablename__ = 'states'
-    id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String(256), nullable=False)
-
-
-def list_states(username, password, dbname):
-    """connects to mysql database"""
-    # create a connection string
-    conn_str = f"mysql+mysqldb://{username}:{password}@localhost/{dbname}"
-
-    # create an engine
-    engine = create_engine(conn_str)
-
-    # create a configured "Session" class
-    Session = sessionmaker(bind=engine)
-
-    # create a Session
-    session = Session()
-
-    # query all states and order by id
-    states = session.query(State).order_by(State.id.asc()).all()
-
-    # print each state
-    for state in states:
-        print(f"({state.id}, '{state.name}')")
-
-    session.close()
-
 
 if __name__ == "__main__":
-    # get command line arg
-    username = sys.argv[1]
-    password = sys.argv[2]
-    dbname = sys.argv[3]
+    # grab credentials and database name from argv
+    user, pwd, db = sys.argv[1], sys.argv[2], sys.argv[3]
 
-    # call the function to list states
-    list_states(username, password, dbname)
+    # connect to the MySQL server on localhost:3306
+    conn = MySQLdb.connect(
+        host="localhost",
+        port=3306,
+        user=user,
+        passwd=pwd,
+        db=db,
+        charset="utf8"
+    )
+    cur = conn.cursor()
+
+    # execute the required query
+    cur.execute("SELECT * FROM states ORDER BY id ASC;")
+
+    # fetch and print each row as a tuple
+    for row in cur.fetchall():
+        print(row)
+
+    # clean up
+    cur.close()
+    conn.close()
